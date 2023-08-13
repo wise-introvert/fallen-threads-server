@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "resolveJsonModule": true,
     "outDir": "../dist",
     "baseUrl": "",
     "module": "commonjs",
@@ -15,4 +16,3 @@
     "lib": ["es2017", "ESNext.BigInt", "dom", "esnext.asynciterable"]
   }
 }
-
