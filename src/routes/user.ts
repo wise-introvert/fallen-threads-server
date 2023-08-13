@@ -54,6 +54,11 @@ router.post(`/signup`, async (req: Request, res: Response): Promise<void> => {
         success: true,
         data: {
           id: user.id,
+          ...(process.env.NODE_ENV !== 'production' && {
+            username,
+            email,
+            name,
+          }),
         },
       })
       .end()
