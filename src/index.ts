@@ -1,34 +1,27 @@
-/* tslint:disable-next-line */
-require('dotenv').config()
-import * as http from 'http'
-import { DB, PORT } from './var/config'
-import { Socket } from './socket/index'
-import app from './server'
+import * as bodyParser from 'body-parser'
+import * as cookieParser from 'cookie-parser'
+import * as express from 'express'
+import * as logger from 'morgan'
+import * as path from 'path'
+import { Response } from 'express'
 
-const server: http.Server = http.createServer(app)
-const socket = new Socket(server)
+const app: express.Express = express()
 
-server.listen(PORT)
+app.use(logger('dev'))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(express.static(path.join(__dirname, '../../src/public')))
 
-server.on('error', (e: Error) => {
-  console.log('Error starting server' + e)
+app.get('/', (_, res: Response<{ message: string }>) => {
+  res
+    .status(200)
+    .json({
+      message: 'hello',
+    })
+    .end()
 })
 
-server.on('listening', () => {
-  if (DB) {
-    console.log(
-      `Server started on port ${PORT} on env ${
-        process.env.NODE_ENV || 'dev'
-      } dbcon ${DB}`,
-    )
-  } else {
-    console.log(
-      `Server started on port ${PORT} on env ${process.env.NODE_ENV || 'dev'}`,
-    )
-  }
+app.listen(3000, () => {
+  console.log('server started on port 3000')
 })
-
-export default {
-  server,
-  socket,
-}
