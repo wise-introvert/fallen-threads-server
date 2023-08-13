@@ -12,4 +12,4 @@ bin
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 .env
-./src/serviceAccountKey.json
+src/serviceAccountKey.json
