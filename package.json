@@ -24,7 +24,8 @@
     "jsonwebtoken": "^9.0.1",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
-    "strip-ansi": "^7.1.0"
+    "strip-ansi": "^7.1.0",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
