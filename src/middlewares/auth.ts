@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
-import { get, isEmpty } from 'lodash'
+import { get, isEmpty, omit } from 'lodash'
 import { StatusCodes } from 'http-status-codes'
 import { verify, JwtPayload } from 'jsonwebtoken'
 
 import admin from '../config/admin'
 
 const authenticate = async (
-  req: Request,
+  req: Request & { user: Record<string, any> },
   res: Response,
   next: NextFunction,
 ): Promise<void> => {
@@ -43,6 +43,11 @@ const authenticate = async (
           .end()
         next(null)
       } else {
+        const userData = user.docs[0]
+        req.user = {
+          id: userData.id,
+          ...omit(userData.data(), 'password'),
+        }
         next()
       }
     }
