@@ -8,13 +8,47 @@ import {
   Filter,
 } from 'firebase-admin/firestore'
 import { sign } from 'jsonwebtoken'
+import * as yup from 'yup'
 
 import admin from '../config/admin'
 
 const router: Router = Router()
 const db: Firestore = admin.firestore()
+const newUserValidationSchema = yup.object({
+  username: yup
+    .string()
+    .required()
+    .min(6, 'username should have at least 6 characters')
+    .max(32, 'username cannot be more than 32 characters long'),
+  password: yup
+    .string()
+    .required()
+    .min(8, 'password should be at least 8 characters long')
+    .max(32, 'password should not be more than 32 characters long'),
+  email: yup.string().email().required(),
+  name: yup
+    .string()
+    .notRequired()
+    .min(1, 'name should be at least 1 character long')
+    .max(48, 'name cannot be more than 48 characters long'),
+})
+const loginInputValidation = yup.object({
+  username: yup.string().required(),
+  password: yup.string().required(),
+})
 
 router.post(`/signup`, async (req: Request, res: Response): Promise<void> => {
+  try {
+    await newUserValidationSchema.validate(req.body)
+  } catch (err) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      data: {
+        message: err.message,
+      },
+    })
+    return
+  }
   const { username, password, email, name } = req.body
 
   const existing: QuerySnapshot = await db
@@ -66,6 +100,18 @@ router.post(`/signup`, async (req: Request, res: Response): Promise<void> => {
 })
 
 router.post('/login', async (req: Request, res: Response): Promise<void> => {
+  try {
+    await loginInputValidation.validate(req.body)
+  } catch (err) {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      success: false,
+      data: {
+        message: err.message,
+      },
+    })
+    return
+  }
+
   const { username, password } = req.body
 
   const user = await db
